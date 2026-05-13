@@ -1,0 +1,67 @@
+# =============================================================
+# GitHub Actions 工作流：自动部署到 GitHub Pages
+#
+# 触发条件：
+#   - 每次 push 到 master 分支时自动运行
+#
+# 流程：
+#   1. 拉取代码
+#   2. 上传静态文件作为部署产物
+#   3. 部署到 GitHub Pages
+#
+# 面试可以讲的 CI/CD 关键词：
+#   - 持续部署（Continuous Deployment）
+#   - GitHub Actions / Workflow
+#   - Artifact 上传与部署
+#   - 自动化流水线
+# =============================================================
+
+name: Deploy to GitHub Pages
+
+on:
+  # 触发条件：push 到 master 分支
+  push:
+    branches: [master]
+
+  # 允许手动触发（在 GitHub Actions 页面点按钮）
+  workflow_dispatch:
+
+# 权限设置：允许写入 Pages 部署
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 并发控制：同一时间只运行一个部署
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  # ==================== Job 1: 构建 ====================
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 上传静态文件作为 Pages 部署产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 整个项目根目录都上传
+          path: .
+
+  # ==================== Job 2: 部署 ====================
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    # 部署到 GitHub Pages 的环境
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

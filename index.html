@@ -447,6 +447,11 @@
 
             <button class="btn-demo" onclick="enterDemoMode()">🎮 演示模式（不用 Key）</button>
 
+            <div id="configModeHint" class="hint" style="display:none;">
+                当前模式：<span id="currentModeText">演示模式</span><br>
+                <a href="#" onclick="clearAndExit()" style="color:#e74c3c;">退出演示模式并重新配置</a>
+            </div>
+
             <div class="hint">
                 💡 没有 Key？先点"演示模式"体验，<br>
                 或去 <a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a> 注册免费获取
@@ -461,6 +466,7 @@
             <h1>🤖 AI 智能聊天助手</h1>
             <p>基于 DeepSeek / OpenAI 接口</p>
             <div class="header-buttons">
+                <button onclick="openConfig()" title="设置">⚙️</button>
                 <button onclick="clearChat()" title="清空对话">🗑️</button>
                 <button onclick="toggleDarkMode()" title="切换深色模式">🌙</button>
             </div>
@@ -511,6 +517,25 @@
         // ==============================================================
 
         /**
+         * 打开配置弹窗
+         */
+        function openConfig() {
+            const overlay = document.getElementById("configOverlay");
+            const hint = document.getElementById("configModeHint");
+            const modeText = document.getElementById("currentModeText");
+
+            // 根据当前模式显示不同提示
+            if (isDemoMode) {
+                hint.style.display = "block";
+                modeText.textContent = "🎮 演示模式";
+            } else {
+                hint.style.display = "none";
+            }
+
+            overlay.style.display = "flex";
+        }
+
+        /**
          * 保存用户填写的 API Key 和接口地址
          */
         function saveConfig() {
@@ -526,10 +551,25 @@
             // 保存到 localStorage（下次打开不用重新填）
             localStorage.setItem("ai_api_key", key);
             localStorage.setItem("ai_api_url", url || "https://api.deepseek.com/v1/chat/completions");
+            localStorage.removeItem("demo_mode");  // 退出演示模式
 
             // 关闭配置弹窗
+            isDemoMode = false;
             document.getElementById("configOverlay").style.display = "none";
             document.getElementById("userInput").focus();
+        }
+
+        /**
+         * 清除所有配置并退出演示模式
+         */
+        function clearAndExit() {
+            localStorage.removeItem("ai_api_key");
+            localStorage.removeItem("ai_api_url");
+            localStorage.removeItem("demo_mode");
+            isDemoMode = false;
+            document.getElementById("configModeHint").style.display = "none";
+            document.getElementById("apiKeyInput").value = "";
+            document.getElementById("apiUrlInput").value = "";
         }
 
         // ==============================================================
@@ -543,9 +583,12 @@
          */
         function enterDemoMode() {
             isDemoMode = true;
+            // 保存演示模式状态，刷新后保持
+            localStorage.setItem("demo_mode", "true");
+            // 如果有 Key 的话不清除，方便以后切换回来
             document.getElementById("configOverlay").style.display = "none";
             document.getElementById("userInput").focus();
-            addMessage("ai", "🎮 演示模式已开启！\n\n我现在是模拟的 AI 回复，你可以随便问问题试试效果。\n（想要真 AI 回复，退出后配置 API Key 即可）");
+            addMessage("ai", "🎮 演示模式已开启！\n\n我现在是模拟的 AI 回复，你可以随便问问题试试效果。\n（想要真 AI 回复，点击标题栏的 ⚙️ 按钮配置 API Key 即可）");
         }
 
         /**
@@ -594,9 +637,15 @@
         }
 
         /**
-         * 页面加载时，检查是否已保存过 API Key
+         * 页面加载时，恢复之前的配置
          */
         window.onload = function () {
+            // 先检查是否在演示模式
+            if (localStorage.getItem("demo_mode") === "true") {
+                isDemoMode = true;
+                document.getElementById("configOverlay").style.display = "none";
+            }
+
             const savedKey = localStorage.getItem("ai_api_key");
             if (savedKey) {
                 // 有保存过的 Key，直接关闭配置弹窗
