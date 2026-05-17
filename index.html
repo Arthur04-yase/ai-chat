@@ -585,7 +585,7 @@
         <div class="chat-messages" id="chatMessages">
             <!-- 欢迎消息 -->
             <div class="message ai">
-                <div class="avatar ai"><svg viewBox="0 0 36 36"><defs><linearGradient id="aig" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#667eea"/><stop offset="1" stop-color="#5b4fcf"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#aig)"/><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
+                <div class="avatar ai" style="background:linear-gradient(135deg,#667eea,#5b4fcf)"><svg viewBox="0 0 36 36"><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
                 <div>
                     <div class="bubble">你好！我是 AI 助手，有什么可以帮你的吗？</div>
                     <div class="time">刚刚</div>
@@ -912,7 +912,7 @@
             const div = document.createElement("div");
             div.className = `message ${role}${isGrouped ? ' grouped' : ''}`;
             div.innerHTML = `
-                <div class="avatar ${role}"><svg viewBox="0 0 36 36">${role === "ai" ? '<defs><linearGradient id="aig" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#667eea"/><stop offset="1" stop-color="#5b4fcf"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#aig)"/><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/>' : '<defs><linearGradient id="usg" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#43e97b"/><stop offset="1" stop-color="#1db954"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#usg)"/><circle cx="18" cy="13" r="4.5" fill="rgba(255,255,255,0.92)"/><path d="M10.5 27.5c0-4.15 3.35-7.5 7.5-7.5s7.5 3.35 7.5 7.5" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.5" stroke-linecap="round"/>'}</svg></div>
+                <div class="avatar ${role}" style="background:linear-gradient(135deg,${role === 'ai' ? '#667eea,#5b4fcf' : '#43e97b,#1db954'})"><svg viewBox="0 0 36 36">${role === "ai" ? '<path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/>' : '<circle cx="18" cy="13" r="4.5" fill="rgba(255,255,255,0.92)"/><path d="M10.5 27.5c0-4.15 3.35-7.5 7.5-7.5s7.5 3.35 7.5 7.5" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.5" stroke-linecap="round"/>'}</svg></div>
                 <div>
                     <div class="bubble">${formatContent(content)}</div>
                     <div class="time">${getCurrentTime()}${role === "user" ? '<span class="read-status"><span class="read">✓✓</span></span>' : ''}</div>
@@ -933,7 +933,7 @@
             div.className = "message ai";
             div.id = "typingIndicator";
             div.innerHTML = `
-                <div class="avatar ai"><svg viewBox="0 0 36 36"><defs><linearGradient id="aig" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#667eea"/><stop offset="1" stop-color="#5b4fcf"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#aig)"/><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
+                <div class="avatar ai" style="background:linear-gradient(135deg,#667eea,#5b4fcf)"><svg viewBox="0 0 36 36"><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
                 <div class="typing-indicator">
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
@@ -1007,7 +1007,7 @@
             const container = document.getElementById("chatMessages");
             container.innerHTML = `
                 <div class="message ai">
-                    <div class="avatar ai"><svg viewBox="0 0 36 36"><defs><linearGradient id="aig" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#667eea"/><stop offset="1" stop-color="#5b4fcf"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#aig)"/><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
+                    <div class="avatar ai" style="background:linear-gradient(135deg,#667eea,#5b4fcf)"><svg viewBox="0 0 36 36"><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
                     <div>
                         <div class="bubble">你好！我是 AI 助手，有什么可以帮你的吗？</div>
                         <div class="time">刚刚</div>
