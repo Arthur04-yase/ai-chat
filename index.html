@@ -116,7 +116,7 @@
         .avatar {
             width: 36px;
             height: 36px;
-            border-radius: 6px;
+            border-radius: 8px;
             flex-shrink: 0;
             overflow: hidden;
             display: flex;
@@ -436,6 +436,98 @@
             border-top: 0.5px solid #e5e5ea;
         }
 
+        /* ==================== 日期分隔条 ==================== */
+        .date-separator {
+            text-align: center;
+            margin: 8px 0;
+        }
+        .date-separator span {
+            display: inline-block;
+            padding: 4px 14px;
+            font-size: 12px;
+            color: #8e8e93;
+            background: rgba(142, 142, 147, 0.12);
+            border-radius: 100px;
+        }
+        body.dark-mode .date-separator span {
+            background: rgba(142, 142, 147, 0.18);
+            color: #8e8e93;
+        }
+
+        /* ==================== 连续消息合并 ==================== */
+        .message.grouped {
+            margin-bottom: 2px;
+        }
+        .message.grouped .avatar {
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .message.grouped .bubble {
+            border-radius: 12px !important;
+        }
+        .message.grouped:first-of-type .bubble {
+            border-radius: 4px 12px 12px 12px !important;
+        }
+        .message.user.grouped .bubble {
+            border-radius: 12px !important;
+        }
+        .message.user.grouped:last-of-type .bubble {
+            border-radius: 12px 4px 12px 12px !important;
+        }
+
+        /* ==================== 发送按钮波纹 ==================== */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            width: 80px; height: 80px;
+            margin-top: -40px; margin-left: -40px;
+            top: 50%; left: 50%;
+            transform: scale(0);
+            opacity: 0;
+        }
+        .ripple:not(:disabled):active::after {
+            animation: rippleAnim 0.4s ease-out;
+        }
+        @keyframes rippleAnim {
+            0%   { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        /* ==================== 输入框聚焦上浮 ==================== */
+        .chat-input-area {
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .chat-input-area:focus-within {
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
+            transform: translateY(-1px);
+        }
+        body.dark-mode .chat-input-area:focus-within {
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.25);
+        }
+
+        /* ==================== 已读状态标记 ==================== */
+        .read-status {
+            display: inline;
+            font-size: 10px;
+            color: #bbb;
+            margin-left: 2px;
+        }
+        .read-status .read {
+            color: #34c759;
+        }
+        body.dark-mode .read-status {
+            color: #555;
+        }
+        body.dark-mode .read-status .read {
+            color: #34c759;
+        }
+
         /* ==================== 移动端适配 ==================== */
         @media (max-width: 480px) {
             .chat-container {
@@ -493,7 +585,7 @@
         <div class="chat-messages" id="chatMessages">
             <!-- 欢迎消息 -->
             <div class="message ai">
-                <div class="avatar ai"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#667eea" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/></svg></div>
+                <div class="avatar ai"><svg viewBox="0 0 36 36"><defs><linearGradient id="aig" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#667eea"/><stop offset="1" stop-color="#5b4fcf"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#aig)"/><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
                 <div>
                     <div class="bubble">你好！我是 AI 助手，有什么可以帮你的吗？</div>
                     <div class="time">刚刚</div>
@@ -510,7 +602,7 @@
                 autofocus
                 onkeydown="if(event.key==='Enter') sendMessage()"
             />
-            <button id="sendBtn" onclick="sendMessage()">➤</button>
+            <button id="sendBtn" class="ripple" onclick="sendMessage()">➤</button>
         </div>
 
         <div class="chat-footer">AI 聊天助手 v1.0</div>
@@ -528,6 +620,27 @@
                 content: "你是一个友好的 AI 助手，请用中文简洁地回答用户问题。"
             }
         ];
+
+        // UI 状态追踪（日期分隔、消息合并）
+        let lastMessageDate = '';
+        let lastMessageRole = null;
+
+        // ==============================================================
+        //  工具函数
+        // ==============================================================
+
+        /**
+         * 获取日期标签（今天 / 昨天 / 具体日期）
+         */
+        function getDateLabel(date) {
+            const today = new Date();
+            const d = new Date(date);
+            if (d.toDateString() === today.toDateString()) return '今天';
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (d.toDateString() === yesterday.toDateString()) return '昨天';
+            return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+        }
 
         // ==============================================================
         //  API Key 配置相关
@@ -663,6 +776,9 @@
                 document.getElementById("configOverlay").style.display = "none";
             }
 
+            // 初始化日期追踪（硬编码的欢迎消息属于"今天"）
+            lastMessageDate = getDateLabel(new Date());
+
             const savedKey = localStorage.getItem("ai_api_key");
             if (savedKey) {
                 // 有保存过的 Key，直接关闭配置弹窗
@@ -778,20 +894,32 @@
         function addMessage(role, content) {
             const container = document.getElementById("chatMessages");
 
-            // 创建消息的 HTML 结构
+            // --- 日期分隔条 ---
+            const now = new Date();
+            const dateLabel = getDateLabel(now);
+            if (dateLabel !== lastMessageDate) {
+                lastMessageDate = dateLabel;
+                const sep = document.createElement("div");
+                sep.className = "date-separator";
+                sep.innerHTML = `<span>${dateLabel}</span>`;
+                container.appendChild(sep);
+            }
+
+            // --- 连续消息合并 ---
+            const isGrouped = (role === lastMessageRole) && lastMessageRole !== null;
+            lastMessageRole = role;
+
             const div = document.createElement("div");
-            div.className = `message ${role}`;
+            div.className = `message ${role}${isGrouped ? ' grouped' : ''}`;
             div.innerHTML = `
-                <div class="avatar ${role}"><svg viewBox="0 0 36 36">${role === "ai" ? '<rect width="36" height="36" fill="#667eea" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/>' : '<rect width="36" height="36" fill="#43e97b" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/>'}</svg></div>
+                <div class="avatar ${role}"><svg viewBox="0 0 36 36">${role === "ai" ? '<defs><linearGradient id="aig" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#667eea"/><stop offset="1" stop-color="#5b4fcf"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#aig)"/><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/>' : '<defs><linearGradient id="usg" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#43e97b"/><stop offset="1" stop-color="#1db954"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#usg)"/><circle cx="18" cy="13" r="4.5" fill="rgba(255,255,255,0.92)"/><path d="M10.5 27.5c0-4.15 3.35-7.5 7.5-7.5s7.5 3.35 7.5 7.5" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2.5" stroke-linecap="round"/>'}</svg></div>
                 <div>
                     <div class="bubble">${formatContent(content)}</div>
-                    <div class="time">${getCurrentTime()}</div>
+                    <div class="time">${getCurrentTime()}${role === "user" ? '<span class="read-status"><span class="read">✓✓</span></span>' : ''}</div>
                 </div>
             `;
 
             container.appendChild(div);
-
-            // 滚动到最新消息
             container.scrollTop = container.scrollHeight;
         }
 
@@ -805,7 +933,7 @@
             div.className = "message ai";
             div.id = "typingIndicator";
             div.innerHTML = `
-                <div class="avatar ai"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#667eea" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/></svg></div>
+                <div class="avatar ai"><svg viewBox="0 0 36 36"><defs><linearGradient id="aig" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#667eea"/><stop offset="1" stop-color="#5b4fcf"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#aig)"/><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
                 <div class="typing-indicator">
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
@@ -866,17 +994,20 @@
         function clearChat() {
             if (!confirm("确定要清空所有对话吗？")) return;
 
+            // 重置对话历史和 UI 状态
             messageHistory = [
                 {
                     role: "system",
                     content: "你是一个友好的 AI 助手，请用中文简洁地回答用户问题。"
                 }
             ];
+            lastMessageDate = '';
+            lastMessageRole = null;
 
             const container = document.getElementById("chatMessages");
             container.innerHTML = `
                 <div class="message ai">
-                    <div class="avatar ai"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#667eea" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/></svg></div>
+                    <div class="avatar ai"><svg viewBox="0 0 36 36"><defs><linearGradient id="aig" x1="0" y1="0" x2="36" y2="36"><stop offset="0" stop-color="#667eea"/><stop offset="1" stop-color="#5b4fcf"/></linearGradient></defs><rect width="36" height="36" rx="8" fill="url(#aig)"/><path d="M18 9.5l2.2 4.85L25.5 16l-5.3 2.15L18 22.5l-2.2-4.35L10.5 16l5.3-1.65z" fill="rgba(255,255,255,0.92)"/></svg></div>
                     <div>
                         <div class="bubble">你好！我是 AI 助手，有什么可以帮你的吗？</div>
                         <div class="time">刚刚</div>
