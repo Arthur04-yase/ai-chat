@@ -117,20 +117,22 @@
             width: 36px;
             height: 36px;
             border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .avatar.ai {
-            background: #c8c8c8;
             margin-right: 10px;
         }
 
         .avatar.user {
-            background: #95ec69;
             margin-left: 10px;
             order: 1;
         }
@@ -482,7 +484,7 @@
         <div class="chat-messages" id="chatMessages">
             <!-- 欢迎消息 -->
             <div class="message ai">
-                <div class="avatar ai">🤖</div>
+                <div class="avatar ai"><img src="https://i.pravatar.cc/36?img=3" alt="AI"></div>
                 <div>
                     <div class="bubble">你好！我是 AI 助手，有什么可以帮你的吗？</div>
                     <div class="time">刚刚</div>
@@ -771,7 +773,7 @@
             const div = document.createElement("div");
             div.className = `message ${role}`;
             div.innerHTML = `
-                <div class="avatar ${role}">${role === "ai" ? "🤖" : "😊"}</div>
+                <div class="avatar ${role}"><img src="${role === "ai" ? "https://i.pravatar.cc/36?img=3" : "https://i.pravatar.cc/36?img=60"}" alt="${role}"></div>
                 <div>
                     <div class="bubble">${formatContent(content)}</div>
                     <div class="time">${getCurrentTime()}</div>
@@ -794,7 +796,7 @@
             div.className = "message ai";
             div.id = "typingIndicator";
             div.innerHTML = `
-                <div class="avatar ai">🤖</div>
+                <div class="avatar ai"><img src="https://i.pravatar.cc/36?img=3" alt="AI"></div>
                 <div class="typing-indicator">
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
@@ -865,7 +867,7 @@
             const container = document.getElementById("chatMessages");
             container.innerHTML = `
                 <div class="message ai">
-                    <div class="avatar ai">🤖</div>
+                    <div class="avatar ai"><img src="https://i.pravatar.cc/36?img=3" alt="AI"></div>
                     <div>
                         <div class="bubble">你好！我是 AI 助手，有什么可以帮你的吗？</div>
                         <div class="time">刚刚</div>
