@@ -119,12 +119,21 @@
             border-radius: 6px;
             flex-shrink: 0;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
+        }
+
+        .avatar svg {
+            width: 100%;
+            height: 100%;
             display: block;
         }
 
@@ -484,7 +493,7 @@
         <div class="chat-messages" id="chatMessages">
             <!-- 欢迎消息 -->
             <div class="message ai">
-                <div class="avatar ai"><img src="https://i.pravatar.cc/36?img=3" alt="AI"></div>
+                <div class="avatar ai"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#667eea" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/></svg></div>
                 <div>
                     <div class="bubble">你好！我是 AI 助手，有什么可以帮你的吗？</div>
                     <div class="time">刚刚</div>
@@ -773,7 +782,7 @@
             const div = document.createElement("div");
             div.className = `message ${role}`;
             div.innerHTML = `
-                <div class="avatar ${role}"><img src="${role === "ai" ? "https://i.pravatar.cc/36?img=3" : "https://i.pravatar.cc/36?img=60"}" alt="${role}"></div>
+                <div class="avatar ${role}"><svg viewBox="0 0 36 36">${role === "ai" ? '<rect width="36" height="36" fill="#667eea" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/>' : '<rect width="36" height="36" fill="#43e97b" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/>'}</svg></div>
                 <div>
                     <div class="bubble">${formatContent(content)}</div>
                     <div class="time">${getCurrentTime()}</div>
@@ -796,7 +805,7 @@
             div.className = "message ai";
             div.id = "typingIndicator";
             div.innerHTML = `
-                <div class="avatar ai"><img src="https://i.pravatar.cc/36?img=3" alt="AI"></div>
+                <div class="avatar ai"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#667eea" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/></svg></div>
                 <div class="typing-indicator">
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
@@ -867,7 +876,7 @@
             const container = document.getElementById("chatMessages");
             container.innerHTML = `
                 <div class="message ai">
-                    <div class="avatar ai"><img src="https://i.pravatar.cc/36?img=3" alt="AI"></div>
+                    <div class="avatar ai"><svg viewBox="0 0 36 36"><rect width="36" height="36" fill="#667eea" rx="6"/><circle cx="18" cy="13" r="5" fill="rgba(255,255,255,0.92)"/><ellipse cx="18" cy="27" rx="10" ry="6" fill="rgba(255,255,255,0.92)"/></svg></div>
                     <div>
                         <div class="bubble">你好！我是 AI 助手，有什么可以帮你的吗？</div>
                         <div class="time">刚刚</div>
